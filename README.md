@@ -1,73 +1,98 @@
-# React + TypeScript + Vite
+# Habit & Mood Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal habit and mood tracking web app built with React + TypeScript.
+Track your daily habits, visualize mood trends, and get automatic insights
+based on your data.
 
-Currently, two official plugins are available:
+![React](https://img.shields.io/badge/React-18-61dafb?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Daily Log**: Rate your mood (1–10) and check off completed habits
+- **Mood Chart**: Line chart with weekly averages and trend reference line
+- **Entry History**: Scrollable history with color-coded mood scores
+- **Auto Insights**: Correlation analysis between habits and mood (e.g. "Your mood is higher on days you exercise")
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Layer | Technology |
+|-------|-----------|
+| UI | React 18 + TypeScript |
+| Build | Vite |
+| Charts | Recharts |
+| Storage | localStorage (no backend) |
+| Styling | Plain CSS |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+```
+src/
+├── components/        # UI only, no business logic
+│   ├── DailyForm/
+│   ├── MoodChart/
+│   ├── HabitHistory/
+│   └── InsightPanel/
+├── services/          # External communication (localStorage)
+│   └── storageService.ts
+├── utils/             # Pure functions framework agnostic
+│   ├── moodCalculator.ts
+│   ├── habitAnalyzer.ts
+│   └── insightGenerator.ts
+├── hooks/             # React state bridge
+│   └── useTrackerData.ts
+├── types/             # All interfaces and type definitions
+│   └── index.ts
+└── data/
+    └── dummyData.ts   # Sample data for development
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Getting Started
+```bash
+# Clone the repository
+git clone https://github.com/rbbieee/habit-mood-tracker.git
+cd habit-mood-tracker
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## Architecture
+
+This project follows a **separation of concerns** principle:
+
+- `utils/` pure TypeScript functions with no React dependency. Can be unit tested independently.
+- `services/` handles all localStorage read/write. Swap to an API later by only changing this layer.
+- `hooks/` bridge between business logic and React state. Components stay "dumb".
+- `components/` responsible for rendering only. Receives data and callbacks via props.
+
+---
+
+## How Insights Work
+
+The insight engine compares average mood on days a habit was done vs. not done:
+```
+moodDelta = avgMoodWith - avgMoodWithout
+```
+
+If `moodDelta >= 1` with enough data points, a positive insight is generated.
+Insights are sorted by confidence score before display.
+
+---
+
+### Still in development...
